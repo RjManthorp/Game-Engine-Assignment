@@ -16,10 +16,3 @@ void InputManager::MouseMoved()
 
 
 
-
-InputManager::InputManager() {
-}
-
-
-InputManager::~InputManager() {
-}

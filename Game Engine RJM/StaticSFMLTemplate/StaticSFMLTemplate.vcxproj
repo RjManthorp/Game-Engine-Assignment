@@ -131,11 +131,13 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Display.cpp" />
     <ClCompile Include="InputManager.cpp" />
     <ClCompile Include="Logging.cpp" />
     <ClCompile Include="Main.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Display.h" />
     <ClInclude Include="InputManager.h" />
     <ClInclude Include="Logging.h" />
   </ItemGroup>
