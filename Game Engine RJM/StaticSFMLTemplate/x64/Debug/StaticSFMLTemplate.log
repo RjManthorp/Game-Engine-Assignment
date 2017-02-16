@@ -1,4 +1,6 @@
 ﻿C:\Program Files (x86)\MSBuild\Microsoft.Cpp\v4.0\V140\Microsoft.CppBuild.targets(392,5): warning MSB8028: The intermediate directory (x64\Debug\) contains files shared from another project (StaticSFMLTemplate.vcxproj).  This can lead to incorrect clean and rebuild behavior.
   Main.cpp
-  StaticSFMLTemplate.vcxproj -> C:\Users\Ryan\Desktop\Game Engine RJM\x64\Debug\Game Engine Assignment.exe
-  StaticSFMLTemplate.vcxproj -> C:\Users\Ryan\Desktop\Game Engine RJM\x64\Debug\Game Engine Assignment.pdb (Partial PDB)
+Main.obj : error LNK2019: unresolved external symbol "public: __cdecl b2World::b2World(struct b2Vec2 const &)" (??0b2World@@QEAA@AEBUb2Vec2@@@Z) referenced in function main
+Main.obj : error LNK2019: unresolved external symbol "public: __cdecl b2World::~b2World(void)" (??1b2World@@QEAA@XZ) referenced in function main
+..\lib\Box2D.lib : warning LNK4272: library machine type 'X86' conflicts with target machine type 'x64'
+C:\Program Files (x86)\Ryan's Folder\Game-Engine-Assignment\Game Engine RJM\x64\Debug\Game Engine Assignment.exe : fatal error LNK1120: 2 unresolved externals
