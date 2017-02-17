@@ -1,4 +1,7 @@
 #include "Display.h"
+#include <Box2D\Box2D.h>
+
+
 
 void Display::drawScreenGrid(sf::RenderWindow * window)
 
@@ -24,7 +27,7 @@ void Display::drawScreenGrid(sf::RenderWindow * window)
 void Display::testShape(sf::RenderWindow * window)
 {
 	sf::RectangleShape block;
-	block.setPosition(320, 80);
+	block.setPosition(80, 80);
 	block.setSize(sf::Vector2f(80.f, 80.f));
 	block.setOutlineColor(sf::Color::Green);
 	block.setOutlineThickness(-2);
@@ -37,3 +40,13 @@ void Display::testShape(sf::RenderWindow * window)
 
 
 
+
+//if (global shares == low)
+//	{
+//		buy(shares);
+//	}
+//
+//if (global shares == high)
+//	{
+//		sell(shares);
+//	}

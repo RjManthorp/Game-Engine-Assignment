@@ -6,6 +6,8 @@
 class Display {
 public:
 
+
+
 	void drawScreenGrid(sf::RenderWindow* window);
 	
 	void testShape(sf::RenderWindow* window);
