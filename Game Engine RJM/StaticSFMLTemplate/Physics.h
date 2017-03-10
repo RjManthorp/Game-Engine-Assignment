@@ -1,34 +1,46 @@
 #pragma once
+
 #include <Box2D\Box2D.h>
 #include <SFML\Graphics.hpp>
-
-const float SCALE = 30.f;
+#include <vector>
 
 class Physics
 {
 public:
-	// default constructor, sets height and width to 32.
-	Physics() : width(32.0f), height(32.0f) {};
+	Physics() {};
+	Physics(int xPos, int yPos, float width, float height, b2World & world, sf::Color colour, bool dynamic = false); //constructor for a new physics object
+	~Physics();
 
-	// constructor with width + height set
-	Physics(float w, float h) : width(w), height(h) {};
+	void SetPosition(float x, float y, bool updatePhysics = false);
+	sf::Vector2f GetScreenPosition();
+	sf::Vector2f GetPhysicsPosition();
 
-	Physics(float w, float h, b2World& world) : width(w), height(h) { CreateBox(world); }
-	//Physics(float w, float h, b2World& world) : width(w), height(h) { CreateGround(world); }
+	sf::Sprite GetSprite() { return sprite; }
+	void SetSprite(sf::Sprite newSprite) { sprite = newSprite; }
+	sf::Texture GetTexture() { return texture; }
+	void SetTexture(sf::Texture newTex) { texture = newTex; }
 
-	void CreateBox(b2World& World);
+	virtual sf::Shape &GetShape() { return shape; }
+	b2Body *GetPhysicsBody() const { return body; }
 
-	void CreateGround(b2World& World);
+protected:
+	void buildBody(int xPos, int yPos, b2World & world, b2Shape &shape);
+	void buildShape(int xPos, int yPos, float width, float height, sf::Color colour);
 
-	void Draw(sf::RenderWindow *window);
+	b2BodyDef bodyDef;
+	b2Body* body;
+	b2PolygonShape box;
+	b2FixtureDef fixtureDef;
 
-	void Initialize(sf::Texture &spriteTex);
+	sf::RectangleShape shape;
 
-private:
+	sf::Texture texture;
 	sf::Sprite sprite;
-	b2Body *body;
 
-	float width;
-	float height;
+	bool isDynamic;
+
+public:
+	static std::vector<Physics*> PhysicsObjects;
 };
 
+extern const float SCALE;

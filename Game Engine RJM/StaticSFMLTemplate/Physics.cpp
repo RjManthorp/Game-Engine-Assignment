@@ -1,52 +1,61 @@
 #include "Physics.h"
 
+const float SCALE = 30.0f; //scale is needed as box2D uses meters and sfml uses pixels
 
-
-void Physics::CreateBox(b2World& World)
+std::vector<Physics*> Physics::PhysicsObjects;
+//Generic physics class
+Physics::Physics(int xPos, int yPos, float width, float height, b2World & world, sf::Color colour, bool dynamic)//if true the object created will be effected by gravity
 {
-	b2BodyDef BodyDef;
-	BodyDef.position = b2Vec2(10/SCALE, 50/SCALE);
-	BodyDef.type = b2_dynamicBody;
-	body = World.CreateBody(&BodyDef);
+	if ( dynamic)
+		bodyDef.type = b2_dynamicBody; // dynamic is effected by gravity
 
-	b2PolygonShape Shape;
-	Shape.SetAsBox((width/2)/SCALE, (height/2)/SCALE);
-	b2FixtureDef FixtureDef;
-	FixtureDef.density = 1.f;
-	FixtureDef.friction = 0.7f;
-	FixtureDef.shape = &Shape;
-	body->CreateFixture(&FixtureDef);
+	box.SetAsBox((width / 2) / SCALE, (height / 2) / SCALE); // divide by 2 to put it in the middle 
 
-	sprite.setOrigin(width / 2, height / 2);
+	buildBody(xPos, yPos, world, box);
+	buildShape(xPos, yPos, width, height, colour);
+	
+	PhysicsObjects.push_back(this);
 }
 
-void Physics::CreateGround(b2World & World)
+void Physics::buildBody(int xPos, int yPos, b2World & world, b2Shape &shape)
 {
-	b2BodyDef BodyDef;
-	BodyDef.position = b2Vec2(20 / SCALE, 500 / SCALE);
-	BodyDef.type = b2_staticBody;
-	body = World.CreateBody(&BodyDef);
+	bodyDef.position.Set(xPos / SCALE, yPos / SCALE); //position of the collider
+	//bodyDef.angle = angle * b2_pi;
+	body = world.CreateBody(&bodyDef);
+	fixtureDef.shape = &shape;
+	fixtureDef.density = 1.0f;
+	fixtureDef.friction = 0.3f;
 
-	b2PolygonShape Shape;
-	Shape.SetAsBox((width / 2) / SCALE, (height / 2) / SCALE);
-	b2FixtureDef FixtureDef;
-	FixtureDef.density = 1.f;
-	FixtureDef.friction = 0.7f;
-	FixtureDef.shape = &Shape;
-	body->CreateFixture(&FixtureDef);
+	body->CreateFixture(&fixtureDef);
+}
 
-	sprite.setOrigin(width / 2, height / 2);
+void Physics::buildShape(int xPos, int yPos, float width, float height, sf::Color colour)
+{
+	shape = sf::RectangleShape(sf::Vector2f(width, height));
+	shape.setOrigin(sf::Vector2f(width / 2, height / 2));
+	shape.setPosition(sf::Vector2f((float)xPos, (float)yPos));
+	shape.setFillColor(colour);
+	//shape.rotate(angle);
 
 }
 
-void Physics::Draw(sf::RenderWindow * window)
+Physics::~Physics()
+{}
+
+void Physics::SetPosition(float x, float y, bool updatePhysics)
 {
-	sprite.setPosition(SCALE * body->GetPosition().x, SCALE * body->GetPosition().y);
-	sprite.setRotation(body->GetAngle() * 180/b2_pi);
-	window->draw(sprite);
+	if (updatePhysics)
+		body->SetTransform(b2Vec2(x / SCALE, y / SCALE), body->GetAngle());
+
+	shape.setPosition(sf::Vector2f(x, y));
 }
 
-void Physics::Initialize(sf::Texture & spriteTex)
+sf::Vector2f Physics::GetPhysicsPosition()
 {
-	sprite.setTexture(spriteTex);
+	return sf::Vector2f(body->GetPosition().x, body->GetPosition().y);
+}
+
+sf::Vector2f Physics::GetScreenPosition()
+{
+	return shape.getPosition();
 }

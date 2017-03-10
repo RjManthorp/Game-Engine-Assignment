@@ -7,7 +7,7 @@ public:
 
 	void mousePosition(sf::Vector2i mPos);
 
-	void setMouseState(int clickNum, bool numState);
+	void setMouseState(char clickNum, bool numState);
 	void setKeyState(int keyNum, bool keyState);
 	
 	bool getMouseState(int clickNum);

@@ -2,41 +2,66 @@
 
 #include <SFML/Graphics.hpp>
 #include <Box2D\Box2D.h>
+#include "b2GLDraw.h"
 
 #include "Logging.h"
 #include "Display.h"
 #include "InputManager.h"
-
 #include "Physics.h"
+#include "PhysicsCircle.h"
+
+#define _USE_MATH_DEFINES 1
+
+#include <math.h>
 
 int screenX = 800;
 int screenY = 600;
 
+//Box2D
+int velocityIterations = 8;
+int positionIterations = 3;
+float32 timeStep = 1.0f / 60.0f;
+
 int main()
 {
 	sf::RenderWindow window(sf::VideoMode(screenX, screenY), "Skeleton Foot Engine");
-
 	Display Draw;
 	InputManager instance;
-
-	b2Vec2 Gravity(0.f, 30.3f);
+	//-----------
+	//Box2D
+	b2Vec2 Gravity(0.0f, 10.2f);
 	b2World World(Gravity);
 
-	Physics *physicsObject = new Physics(32.f, 32.f, World);
-	Physics *groundObject = new Physics(32.f, 32.f, World);
+	b2GLDraw fooDrawInstance;
+	World.SetDebugDraw(&fooDrawInstance);
+	uint32 flags = 0;
+	flags += b2Draw::e_shapeBit;
+	flags += b2Draw::e_jointBit;
+	flags += b2Draw::e_aabbBit;
+	flags += b2Draw::e_pairBit;
+	flags += b2Draw::e_centerOfMassBit;
+	fooDrawInstance.SetFlags(flags);
 
-	sf::Texture boxTexture;
-	sf::Texture groundtexture;
-	boxTexture.loadFromFile("box.png");
-	groundtexture.loadFromFile("ground.png");
-	
-	groundObject->Initialize(groundtexture);
-	physicsObject->Initialize(boxTexture);
+	//Make physics object--------------------------------X-Y-H-W-Colour-Dynamic(true) or static-------------------
+	Physics *physicsObject = new Physics(400, 100, 50.f, 50.f, World, sf::Color::Cyan, true);
+	Physics *mouseObject = new Physics(10, 10, 70.f, 70.f, World, sf::Color::Magenta, true);
+	PhysicsCircle *circle = new PhysicsCircle(100, 100, 25.f, 50.0f, World, sf::Color::Red, true);
+	Physics *physicsObject2 = new Physics(400, 100, 450.f, 10.f, World, sf::Color::Cyan, true);
+	Physics groundPlatform = Physics(200, 350, 400.f, 25.f,World, sf::Color::Green);
+	Physics groundPlatform2 = Physics(300, 600, 1000.f, 25.f, World, sf::Color::Yellow);
+	Physics *wallLeft = new Physics(0, 150, 50.f, 900.f, World, sf::Color::Blue);
+	Physics *wallRight = new Physics(800, 150, 50.f, 900.f, World, sf::Color::Blue);
 
 	while (window.isOpen()) // main game loop
 	{
+		//-------------
+		//Window clear
+		window.clear();
+		//-------------
+		// Input
 		sf::Vector2i mousePosition = sf::Mouse::getPosition(window); //gets the mouse x and y
 		instance.mousePosition(mousePosition); // writes x and y to terminal
+		mouseObject->SetPosition(mousePosition.x, mousePosition.y, true);
 
 		sf::Event event;
 		while (window.pollEvent(event))
@@ -48,11 +73,43 @@ int main()
 				window.close();
 				break;
 			case sf::Event::MouseButtonPressed:
-				printf("Button %d pressed!\n", event.mouseButton.button);
+				const char*	mouseButtonDown;
+				switch (event.mouseButton.button)
+				{
+				case 0:
+					mouseButtonDown = "Left mouse button";
+					break;
+				case 1:
+					mouseButtonDown = "Right mouse button";
+					break;
+				case 2:
+					mouseButtonDown = "Middle mouse button";
+					break;
+				default:
+					mouseButtonDown = "error";
+					break;
+				}
+				printf("%s pressed!\n", mouseButtonDown);
 				instance.setMouseState(event.mouseButton.button, true);
 				break;
 			case sf::Event::MouseButtonReleased:
-				printf("Button %d released!\n", event.mouseButton.button);
+				const char*	mouseButtonUp;
+				switch (event.mouseButton.button)
+				{
+				case 0:
+					mouseButtonUp = "Left mouse button";
+					break;
+				case 1:
+					mouseButtonUp = "Right mouse button";
+					break;
+				case 2:
+					mouseButtonUp = "Middle mouse button";
+					break;
+				default:
+					mouseButtonUp = "error";
+					break;
+				}
+				printf("%s released!\n", mouseButtonUp);
 				instance.setMouseState(event.mouseButton.button, false);
 				break;
 			case sf::Event::KeyPressed:
@@ -64,35 +121,34 @@ int main()
 				instance.setKeyState(event.key.code, false);
 				break;
 			}
-			
-
 		}
-
-		World.Step(1 / 60.f, 8, 3);
-
-		window.clear();
-
+		//-------------
+		// Physics
+		World.Step(timeStep, velocityIterations, positionIterations);
+		//World.DrawDebugData();
+		//-------------
+		// Drawing
 		Draw.drawScreenGrid(&window);
-		Draw.testShape(&window);
-
-		groundObject->Draw(&window);
-		physicsObject->Draw(&window);
-		
-
+		for (auto &object : Physics::PhysicsObjects)
+		{
+			object->GetShape().setRotation(object->GetPhysicsBody()->GetAngle() / M_PI * 180.f);
+			object->GetShape().setPosition(sf::Vector2f((object->GetPhysicsBody()->GetPosition().x * SCALE), (object->GetPhysicsBody()->GetPosition().y*SCALE)));
+			window.draw(object->GetShape());
+		}	
+		//-------------
+		// Display
 		window.display();
-
 	}
-
 	return 0;
-
 }
 
 
 
 
-
+//
 //#include <SFML\Graphics.hpp>
 //#include <Box2D\Box2D.h>
+//#include "b2GLDraw.h"
 //
 ///** We need this to easily convert between pixel and real-world coordinates*/
 //static const float SCALE = 30.f;
@@ -112,6 +168,18 @@ int main()
 //	b2Vec2 Gravity(0.f, 9.8f);
 //	b2World World(Gravity);
 //	CreateGround(World, 400.f, 500.f);
+//
+//
+//b2GLDraw fooDrawInstance;
+//World.SetDebugDraw(&fooDrawInstance);
+//uint32 flags = 0;
+//flags += b2Draw::e_shapeBit;
+//flags += b2Draw::e_jointBit;
+//flags += b2Draw::e_aabbBit;
+//flags += b2Draw::e_pairBit;
+//flags += b2Draw::e_centerOfMassBit;
+//fooDrawInstance.SetFlags(flags);
+//
 //
 //	/** Prepare textures */
 //	sf::Texture GroundTexture;
@@ -151,6 +219,7 @@ int main()
 //				Window.draw(GroundSprite);
 //			}
 //		}
+//		World.DrawDebugData();
 //		Window.display();
 //	}
 //

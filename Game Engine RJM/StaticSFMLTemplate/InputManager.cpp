@@ -7,15 +7,15 @@
 // takes in mouse position vector 
 void InputManager::mousePosition(sf::Vector2i mPos)
 {
-	std::cout << "X: " << mPos.x << "  Y: " << mPos.y << std::endl;
+	//std::cout << "X: " << mPos.x << "  Y: " << mPos.y << std::endl;
 }
 
-void InputManager::setMouseState(int clickNum, bool numState)
+void InputManager::setMouseState(char clickNum, bool numState)
 {
 	mouseState[clickNum] = numState;
 	std::string clickNumber = std::to_string(clickNum);
 	instance.DebugLog(clickNumber);
-	
+
 }
 
 bool InputManager::getMouseState(int clickNum)

@@ -16,6 +16,9 @@
 * 3. This notice may not be removed or altered from any source distribution.
 */
 
+
+/////////////////////////BOX2D DEBUGGING//////////////////////////////
+
 #ifndef B2_DRAW_H
 #define B2_DRAW_H
 
