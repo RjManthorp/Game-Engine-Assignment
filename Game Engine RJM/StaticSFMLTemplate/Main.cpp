@@ -63,6 +63,8 @@ int main()
 		instance.mousePosition(mousePosition); // writes x and y to terminal
 		mouseObject->SetPosition(mousePosition.x, mousePosition.y, true);
 
+		//physicsObject->ApplyForce(b2Vec2(0, 50), physicsObject->GetWorldCenter());
+
 		sf::Event event;
 		while (window.pollEvent(event))
 		{
