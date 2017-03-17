@@ -5,6 +5,8 @@ class InputManager
 {
 public:
 
+	static InputManager* GetInstance();
+
 	void mousePosition(sf::Vector2i mPos);
 
 	void setMouseState(char clickNum, bool numState);
@@ -13,9 +15,12 @@ public:
 	bool getMouseState(int clickNum);
 	bool getKeyState(int keyNum);
 
-	Logging instance;
+	Logging Logger;
 
 private:
+	InputManager();
+	static InputManager *instance;
+
 	bool mouseState[3];
 	bool currentMouseState[3];
 	bool prevMouseState[3];
@@ -23,9 +28,5 @@ private:
 	bool keyArray[200];
 	bool currentKeyState[200];
 	bool precKeyState[200];
-
-
-
-
 };
 

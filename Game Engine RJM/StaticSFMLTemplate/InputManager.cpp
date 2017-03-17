@@ -3,6 +3,20 @@
 #include <string>
 #include <iostream>
 
+InputManager *InputManager::instance;
+
+InputManager::InputManager()
+{
+
+}
+
+InputManager * InputManager::GetInstance()
+{
+	if (instance == nullptr)
+		instance = new InputManager();
+
+	return instance;
+}
 
 // takes in mouse position vector 
 void InputManager::mousePosition(sf::Vector2i mPos)
@@ -14,7 +28,7 @@ void InputManager::setMouseState(char clickNum, bool numState)
 {
 	mouseState[clickNum] = numState;
 	std::string clickNumber = std::to_string(clickNum);
-	instance.DebugLog(clickNumber);
+	Logger.DebugLog(clickNumber);
 
 }
 
@@ -29,7 +43,7 @@ void InputManager::setKeyState(int keyNum, bool keyState)
 	keyArray[keyNum] = keyState;
 	char keyValue = static_cast<char>(keyNum);
 	std::string keyNumber(1, keyValue);
-	instance.DebugLog(keyNumber);
+	Logger.DebugLog(keyNumber);
 }
 
 bool InputManager::getKeyState(int keyNum) 

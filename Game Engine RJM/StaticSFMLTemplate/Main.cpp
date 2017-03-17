@@ -9,6 +9,7 @@
 #include "InputManager.h"
 #include "Physics.h"
 #include "PhysicsCircle.h"
+#include "player.h"
 
 #define _USE_MATH_DEFINES 1
 
@@ -26,10 +27,15 @@ int main()
 {
 	sf::RenderWindow window(sf::VideoMode(screenX, screenY), "Skeleton Foot Engine");
 	Display Draw;
-	InputManager instance;
+	
+	Player instance;
+
+	sf::Texture ball;
+	ball.loadFromFile("ball.png");
+
 	//-----------
 	//Box2D
-	b2Vec2 Gravity(0.0f, 10.2f);
+	b2Vec2 Gravity(0.0f, 20.2f);
 	b2World World(Gravity);
 
 	b2GLDraw fooDrawInstance;
@@ -43,8 +49,8 @@ int main()
 	fooDrawInstance.SetFlags(flags);
 
 	//Make physics object--------------------------------X-Y-H-W-Colour-Dynamic(true) or static-------------------
-	Physics *physicsObject = new Physics(400, 100, 50.f, 50.f, World, sf::Color::Cyan, true);
-	Physics *mouseObject = new Physics(10, 10, 70.f, 70.f, World, sf::Color::Magenta, true);
+	Physics *physicsObject = new Physics(400, 10, 50.f, 50.f, World, sf::Color::Cyan, true);
+	Physics *mouseObject = new Physics(10, 10, 70.f, 7.f, World, sf::Color::Magenta);
 	PhysicsCircle *circle = new PhysicsCircle(100, 100, 25.f, 50.0f, World, sf::Color::Red, true);
 	Physics *physicsObject2 = new Physics(400, 100, 450.f, 10.f, World, sf::Color::Cyan, true);
 	Physics groundPlatform = Physics(200, 350, 400.f, 25.f,World, sf::Color::Green);
@@ -60,10 +66,11 @@ int main()
 		//-------------
 		// Input
 		sf::Vector2i mousePosition = sf::Mouse::getPosition(window); //gets the mouse x and y
-		instance.mousePosition(mousePosition); // writes x and y to terminal
+		InputManager::GetInstance()->mousePosition(mousePosition); // writes x and y to terminal
 		mouseObject->SetPosition(mousePosition.x, mousePosition.y, true);
 
-		//physicsObject->ApplyForce(b2Vec2(0, 50), physicsObject->GetWorldCenter());
+		circle->SetTexture(ball);
+
 
 		sf::Event event;
 		while (window.pollEvent(event))
@@ -80,19 +87,22 @@ int main()
 				{
 				case 0:
 					mouseButtonDown = "Left mouse button";
+					physicsObject->ApplyLinearImpulse(b2Vec2(-100, 0));
 					break;
 				case 1:
 					mouseButtonDown = "Right mouse button";
+					physicsObject->ApplyLinearImpulse(b2Vec2(100, 0));
 					break;
 				case 2:
 					mouseButtonDown = "Middle mouse button";
+					physicsObject->ApplyLinearImpulse(b2Vec2(0, -70));
 					break;
 				default:
 					mouseButtonDown = "error";
 					break;
 				}
 				printf("%s pressed!\n", mouseButtonDown);
-				instance.setMouseState(event.mouseButton.button, true);
+				InputManager::GetInstance()->setMouseState(event.mouseButton.button, true);
 				break;
 			case sf::Event::MouseButtonReleased:
 				const char*	mouseButtonUp;
@@ -112,15 +122,15 @@ int main()
 					break;
 				}
 				printf("%s released!\n", mouseButtonUp);
-				instance.setMouseState(event.mouseButton.button, false);
+				InputManager::GetInstance()->setMouseState(event.mouseButton.button, false);
 				break;
 			case sf::Event::KeyPressed:
 				printf("Button %d pressed!\n", event.key.code);
-				instance.setKeyState(event.key.code, true);
+				InputManager::GetInstance()->setKeyState(event.key.code, true);
 				break;
 			case sf::Event::KeyReleased:
 				printf("Button %d released!\n", event.key.code);
-				instance.setKeyState(event.key.code, false);
+				InputManager::GetInstance()->setKeyState(event.key.code, false);
 				break;
 			}
 		}
@@ -133,6 +143,7 @@ int main()
 		Draw.drawScreenGrid(&window);
 		for (auto &object : Physics::PhysicsObjects)
 		{
+			object->GetTexture();
 			object->GetShape().setRotation(object->GetPhysicsBody()->GetAngle() / M_PI * 180.f);
 			object->GetShape().setPosition(sf::Vector2f((object->GetPhysicsBody()->GetPosition().x * SCALE), (object->GetPhysicsBody()->GetPosition().y*SCALE)));
 			window.draw(object->GetShape());

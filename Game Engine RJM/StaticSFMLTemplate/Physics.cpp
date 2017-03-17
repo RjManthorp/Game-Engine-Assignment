@@ -17,6 +17,16 @@ Physics::Physics(int xPos, int yPos, float width, float height, b2World & world,
 	PhysicsObjects.push_back(this);
 }
 
+void Physics::ApplyForce(b2Vec2 force)
+{
+	body->ApplyForce(force, body->GetWorldCenter(), true);
+}
+
+void Physics::ApplyLinearImpulse(b2Vec2 force)
+{
+	body->ApplyLinearImpulse(force, body->GetWorldCenter(), true);
+}
+
 void Physics::buildBody(int xPos, int yPos, b2World & world, b2Shape &shape)
 {
 	bodyDef.position.Set(xPos / SCALE, yPos / SCALE); //position of the collider
