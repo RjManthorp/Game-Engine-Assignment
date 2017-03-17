@@ -23,6 +23,10 @@ int velocityIterations = 8;
 int positionIterations = 3;
 float32 timeStep = 1.0f / 60.0f;
 
+
+
+
+
 int main()
 {
 	sf::RenderWindow window(sf::VideoMode(screenX, screenY), "Skeleton Foot Engine");
@@ -48,15 +52,17 @@ int main()
 	flags += b2Draw::e_centerOfMassBit;
 	fooDrawInstance.SetFlags(flags);
 
+
+
 	//Make physics object--------------------------------X-Y-H-W-Colour-Dynamic(true) or static-------------------
-	Physics *physicsObject = new Physics(400, 10, 50.f, 50.f, World, sf::Color::Cyan, true);
-	Physics *mouseObject = new Physics(10, 10, 70.f, 7.f, World, sf::Color::Magenta);
-	PhysicsCircle *circle = new PhysicsCircle(100, 100, 25.f, 50.0f, World, sf::Color::Red, true);
-	Physics *physicsObject2 = new Physics(400, 100, 450.f, 10.f, World, sf::Color::Cyan, true);
-	Physics groundPlatform = Physics(200, 350, 400.f, 25.f,World, sf::Color::Green);
-	Physics groundPlatform2 = Physics(300, 600, 1000.f, 25.f, World, sf::Color::Yellow);
-	Physics *wallLeft = new Physics(0, 150, 50.f, 900.f, World, sf::Color::Blue);
-	Physics *wallRight = new Physics(800, 150, 50.f, 900.f, World, sf::Color::Blue);
+	Physics *physicsObject = new Physics(400, 10, 50.f, 50.f, World, sf::Color::Cyan, sf::Color::Black, -2, true);
+	Physics *mouseObject = new Physics(10, 10, 70.f, 7.f, World, sf::Color::Magenta, sf::Color::Black, -2);
+	PhysicsCircle *circle = new PhysicsCircle(100, 100, 25.f, 50.0f, World, sf::Color::Red, sf::Color::Black, -2, true);
+	Physics *physicsObject2 = new Physics(400, 100, 440.f, 10.f, World, sf::Color::Yellow, sf::Color::Black, -2, true);
+	Physics groundPlatform = Physics(200, 350, 400.f, 25.f,World, sf::Color::Green, sf::Color::Black, -2);
+	Physics groundPlatform2 = Physics(300, 600, 1000.f, 25.f, World, sf::Color::Blue , sf::Color::Black, -2);
+	Physics *wallLeft = new Physics(0, 150, 50.f, 900.f, World, sf::Color::Blue, sf::Color::Black, -2);
+	Physics *wallRight = new Physics(800, 150, 50.f, 900.f, World, sf::Color::Blue, sf::Color::Black, -2);
 
 	while (window.isOpen()) // main game loop
 	{
@@ -69,7 +75,7 @@ int main()
 		InputManager::GetInstance()->mousePosition(mousePosition); // writes x and y to terminal
 		mouseObject->SetPosition(mousePosition.x, mousePosition.y, true);
 
-		circle->SetTexture(ball);
+		//circle->SetTexture(ball);
 
 
 		sf::Event event;
@@ -141,6 +147,7 @@ int main()
 		//-------------
 		// Drawing
 		Draw.drawScreenGrid(&window);
+		
 		for (auto &object : Physics::PhysicsObjects)
 		{
 			object->GetTexture();

@@ -4,7 +4,7 @@ const float SCALE = 30.0f; //scale is needed as box2D uses meters and sfml uses 
 
 std::vector<Physics*> Physics::PhysicsObjects;
 //Generic physics class
-Physics::Physics(int xPos, int yPos, float width, float height, b2World & world, sf::Color colour, bool dynamic)//if true the object created will be effected by gravity
+Physics::Physics(int xPos, int yPos, float width, float height, b2World & world, sf::Color colour, sf::Color outlineColour, float lineThinkness, bool dynamic)//if true the object created will be effected by gravity
 {
 	if ( dynamic)
 		bodyDef.type = b2_dynamicBody; // dynamic is effected by gravity
@@ -12,7 +12,7 @@ Physics::Physics(int xPos, int yPos, float width, float height, b2World & world,
 	box.SetAsBox((width / 2) / SCALE, (height / 2) / SCALE); // divide by 2 to put it in the middle 
 
 	buildBody(xPos, yPos, world, box);
-	buildShape(xPos, yPos, width, height, colour);
+	buildShape(xPos, yPos, width, height, colour, outlineColour, lineThinkness);
 	
 	PhysicsObjects.push_back(this);
 }
@@ -39,12 +39,15 @@ void Physics::buildBody(int xPos, int yPos, b2World & world, b2Shape &shape)
 	body->CreateFixture(&fixtureDef);
 }
 
-void Physics::buildShape(int xPos, int yPos, float width, float height, sf::Color colour)
+void Physics::buildShape(int xPos, int yPos, float width, float height, sf::Color colour, sf::Color outlineColour, float lineThinkness )
 {
+
 	shape = sf::RectangleShape(sf::Vector2f(width, height));
 	shape.setOrigin(sf::Vector2f(width / 2, height / 2));
 	shape.setPosition(sf::Vector2f((float)xPos, (float)yPos));
 	shape.setFillColor(colour);
+	shape.setOutlineColor(outlineColour);
+	shape.setOutlineThickness(lineThinkness);
 	//shape.rotate(angle);
 
 }

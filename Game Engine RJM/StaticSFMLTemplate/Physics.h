@@ -8,7 +8,7 @@ class Physics
 {
 public:
 	Physics() {};
-	Physics(int xPos, int yPos, float width, float height, b2World & world, sf::Color colour, bool dynamic = false); //constructor for a new physics object
+	Physics(int xPos, int yPos, float width, float height, b2World & world, sf::Color colour, sf::Color outlineColour, float lineThinkness, bool dynamic = false); //constructor for a new physics object
 	~Physics();
 
 	void SetPosition(float x, float y, bool updatePhysics = false);
@@ -29,7 +29,7 @@ public:
 
 protected:
 	void buildBody(int xPos, int yPos, b2World & world, b2Shape &shape);
-	void buildShape(int xPos, int yPos, float width, float height, sf::Color colour);
+	void buildShape(int xPos, int yPos, float width, float height, sf::Color colour, sf::Color outlineColour, float lineThinkness);
 
 	b2BodyDef bodyDef;
 	b2Body* body;
