@@ -32,14 +32,12 @@ int main()
 	sf::RenderWindow window(sf::VideoMode(screenX, screenY), "Skeleton Foot Engine");
 	Display Draw;
 	
-	Player instance;
-
 	sf::Texture ball;
 	ball.loadFromFile("ball.png");
 
 	//-----------
 	//Box2D
-	b2Vec2 Gravity(0.0f, 20.2f);
+	b2Vec2 Gravity(0.0f, 0.0f);
 	b2World World(Gravity);
 
 	b2GLDraw fooDrawInstance;
@@ -55,7 +53,7 @@ int main()
 
 
 	//Make physics object--------------------------------X-Y-H-W-Colour-Dynamic(true) or static-------------------
-	Physics *physicsObject = new Physics(400, 10, 50.f, 50.f, World, sf::Color::Cyan, sf::Color::Black, -2, true);
+	Physics *physicsObject = new Physics(400, 50, 50.f, 50.f, World, sf::Color::Cyan, sf::Color::Black, -2, true);
 	Physics *mouseObject = new Physics(10, 10, 70.f, 7.f, World, sf::Color::Magenta, sf::Color::Black, -2);
 	PhysicsCircle *circle = new PhysicsCircle(100, 100, 25.f, 50.0f, World, sf::Color::Red, sf::Color::Black, -2, true);
 	Physics *physicsObject2 = new Physics(400, 100, 440.f, 10.f, World, sf::Color::Yellow, sf::Color::Black, -2, true);
@@ -63,6 +61,9 @@ int main()
 	Physics groundPlatform2 = Physics(300, 600, 1000.f, 25.f, World, sf::Color::Blue , sf::Color::Black, -2);
 	Physics *wallLeft = new Physics(0, 150, 50.f, 900.f, World, sf::Color::Blue, sf::Color::Black, -2);
 	Physics *wallRight = new Physics(800, 150, 50.f, 900.f, World, sf::Color::Blue, sf::Color::Black, -2);
+
+
+	Player *player = new Player(600, 600, 50.f, 50.f, World, sf::Color::Transparent, sf::Color::Black, -5, true);
 
 	while (window.isOpen()) // main game loop
 	{
@@ -73,7 +74,7 @@ int main()
 		// Input
 		sf::Vector2i mousePosition = sf::Mouse::getPosition(window); //gets the mouse x and y
 		InputManager::GetInstance()->mousePosition(mousePosition); // writes x and y to terminal
-		mouseObject->SetPosition(mousePosition.x, mousePosition.y, true);
+		//mouseObject->SetPosition(mousePosition.x, mousePosition.y, true);
 
 		//circle->SetTexture(ball);
 
@@ -93,15 +94,15 @@ int main()
 				{
 				case 0:
 					mouseButtonDown = "Left mouse button";
-					physicsObject->ApplyLinearImpulse(b2Vec2(-100, 0));
+					//physicsObject->ApplyLinearImpulse(b2Vec2(-100, 0));
 					break;
 				case 1:
 					mouseButtonDown = "Right mouse button";
-					physicsObject->ApplyLinearImpulse(b2Vec2(100, 0));
+					//physicsObject->ApplyLinearImpulse(b2Vec2(100, 0));
 					break;
 				case 2:
 					mouseButtonDown = "Middle mouse button";
-					physicsObject->ApplyLinearImpulse(b2Vec2(0, -70));
+					//physicsObject->ApplyLinearImpulse(b2Vec2(0, -70));
 					break;
 				default:
 					mouseButtonDown = "error";
@@ -131,11 +132,11 @@ int main()
 				InputManager::GetInstance()->setMouseState(event.mouseButton.button, false);
 				break;
 			case sf::Event::KeyPressed:
-				printf("Button %d pressed!\n", event.key.code);
+				//printf("Button %d pressed!\n", event.key.code);
 				InputManager::GetInstance()->setKeyState(event.key.code, true);
 				break;
 			case sf::Event::KeyReleased:
-				printf("Button %d released!\n", event.key.code);
+				//printf("Button %d released!\n", event.key.code);
 				InputManager::GetInstance()->setKeyState(event.key.code, false);
 				break;
 			}
@@ -147,6 +148,8 @@ int main()
 		//-------------
 		// Drawing
 		Draw.drawScreenGrid(&window);
+
+		player->movement();
 		
 		for (auto &object : Physics::PhysicsObjects)
 		{
@@ -165,113 +168,3 @@ int main()
 
 
 
-//
-//#include <SFML\Graphics.hpp>
-//#include <Box2D\Box2D.h>
-//#include "b2GLDraw.h"
-//
-///** We need this to easily convert between pixel and real-world coordinates*/
-//static const float SCALE = 30.f;
-//
-///** Create the base for the boxes to land */
-//void CreateGround(b2World& World, float X, float Y);
-//
-///** Create the boxes */
-//void CreateBox(b2World& World, int MouseX, int MouseY);
-//
-//int main() {
-//	/** Prepare the window */
-//	sf::RenderWindow Window(sf::VideoMode(800, 600, 32), "Test");
-//	Window.setFramerateLimit(60);
-//
-//	/** Prepare the world */
-//	b2Vec2 Gravity(0.f, 9.8f);
-//	b2World World(Gravity);
-//	CreateGround(World, 400.f, 500.f);
-//
-//
-//b2GLDraw fooDrawInstance;
-//World.SetDebugDraw(&fooDrawInstance);
-//uint32 flags = 0;
-//flags += b2Draw::e_shapeBit;
-//flags += b2Draw::e_jointBit;
-//flags += b2Draw::e_aabbBit;
-//flags += b2Draw::e_pairBit;
-//flags += b2Draw::e_centerOfMassBit;
-//fooDrawInstance.SetFlags(flags);
-//
-//
-//	/** Prepare textures */
-//	sf::Texture GroundTexture;
-//	sf::Texture BoxTexture;
-//	GroundTexture.loadFromFile("ground.png");
-//	BoxTexture.loadFromFile("Box.png");
-//
-//	while (Window.isOpen()) {
-//		if (sf::Mouse::isButtonPressed(sf::Mouse::Left)) {
-//			int MouseX = sf::Mouse::getPosition(Window).x;
-//			int MouseY = sf::Mouse::getPosition(Window).y;
-//			CreateBox(World, MouseX, MouseY);
-//		}
-//		World.Step(1 / 60.f, 8, 3);
-//
-//		Window.clear(sf::Color::Yellow);
-//		int BodyCount = 0;
-//		for (b2Body* BodyIterator = World.GetBodyList(); BodyIterator != 0; BodyIterator = BodyIterator->GetNext()) {
-//			if (BodyIterator->GetType() == b2_dynamicBody) {
-//				sf::Sprite sprite;
-//				sprite.setTexture(BoxTexture);
-//				sprite.setOrigin(16.f, 16.f);
-//				
-//				sprite.setPosition(SCALE * BodyIterator->GetPosition().x, SCALE * BodyIterator->GetPosition().y);
-//				sprite.setRotation(BodyIterator->GetAngle() * 180 / b2_pi);
-//				Window.draw(sprite);
-//				++BodyCount;
-//			} 
-//			else 
-//			{
-//				sf::Sprite GroundSprite;
-//				GroundSprite.setColor(sf::Color::Yellow);
-//				GroundSprite.setTexture(GroundTexture);
-//				GroundSprite.setOrigin(400.f, 8.f);
-//				GroundSprite.setPosition(BodyIterator->GetPosition().x * SCALE, BodyIterator->GetPosition().y * SCALE);
-//				GroundSprite.setRotation(180 / b2_pi * BodyIterator->GetAngle());
-//				Window.draw(GroundSprite);
-//			}
-//		}
-//		World.DrawDebugData();
-//		Window.display();
-//	}
-//
-//	return 0;
-//}
-//
-//void CreateBox(b2World& World, int MouseX, int MouseY) {
-//	b2BodyDef BodyDef;
-//	BodyDef.position = b2Vec2(MouseX / SCALE, MouseY / SCALE);
-//	BodyDef.type = b2_dynamicBody;
-//	b2Body* Body = World.CreateBody(&BodyDef);
-//
-//	b2PolygonShape Shape;
-//	Shape.SetAsBox((32.f / 2) / SCALE, (32.f / 2) / SCALE);
-//	b2FixtureDef FixtureDef;
-//	FixtureDef.density = 1.f;
-//	FixtureDef.friction = 0.7f;
-//	FixtureDef.shape = &Shape;
-//	Body->CreateFixture(&FixtureDef);
-//}
-//
-//void CreateGround(b2World& World, float X, float Y) {
-//	b2BodyDef BodyDef;
-//	BodyDef.position = b2Vec2(X / SCALE, Y / SCALE);
-//	BodyDef.type = b2_kinematicBody;
-//	b2Body* Body = World.CreateBody(&BodyDef);
-//
-//	b2PolygonShape Shape;
-//	Shape.SetAsBox((800.f / 2) / SCALE, (16.f / 2) / SCALE);
-//	b2FixtureDef FixtureDef;
-//	b2Color(33.3f, 33.3f, 0.1f);
-//	FixtureDef.density = 0.f;
-//	FixtureDef.shape = &Shape;
-//	Body->CreateFixture(&FixtureDef);
-//}

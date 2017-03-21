@@ -7,7 +7,15 @@ InputManager *InputManager::instance;
 
 InputManager::InputManager()
 {
+	for (bool &key : keyArray)
+	{
+		key = false;
+	}
 
+	//for (int i = 0; i < 200; i++)
+	//{
+	//	keyArray[i] = false;
+	//}
 }
 
 InputManager * InputManager::GetInstance()
@@ -43,7 +51,7 @@ void InputManager::setKeyState(int keyNum, bool keyState)
 	keyArray[keyNum] = keyState;
 	char keyValue = static_cast<char>(keyNum);
 	std::string keyNumber(1, keyValue);
-	Logger.DebugLog(keyNumber);
+	//Logger.DebugLog(keyNumber);
 }
 
 bool InputManager::getKeyState(int keyNum) 

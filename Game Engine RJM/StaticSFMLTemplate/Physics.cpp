@@ -14,6 +14,9 @@ Physics::Physics(int xPos, int yPos, float width, float height, b2World & world,
 	buildBody(xPos, yPos, world, box);
 	buildShape(xPos, yPos, width, height, colour, outlineColour, lineThinkness);
 	
+	if (dynamic)
+		body->SetLinearDamping(1.0f);
+	body->SetAngularDamping(1.0f);
 	PhysicsObjects.push_back(this);
 }
 
@@ -36,20 +39,18 @@ void Physics::buildBody(int xPos, int yPos, b2World & world, b2Shape &shape)
 	fixtureDef.density = 1.0f;
 	fixtureDef.friction = 0.3f;
 
+
 	body->CreateFixture(&fixtureDef);
 }
 
 void Physics::buildShape(int xPos, int yPos, float width, float height, sf::Color colour, sf::Color outlineColour, float lineThinkness )
 {
-
 	shape = sf::RectangleShape(sf::Vector2f(width, height));
 	shape.setOrigin(sf::Vector2f(width / 2, height / 2));
 	shape.setPosition(sf::Vector2f((float)xPos, (float)yPos));
 	shape.setFillColor(colour);
 	shape.setOutlineColor(outlineColour);
 	shape.setOutlineThickness(lineThinkness);
-	//shape.rotate(angle);
-
 }
 
 Physics::~Physics()

@@ -13,6 +13,7 @@ public:
 
 	void SetPosition(float x, float y, bool updatePhysics = false);
 	sf::Vector2f GetScreenPosition();
+
 	sf::Vector2f GetPhysicsPosition();
 
 	sf::Sprite GetSprite() { return sprite; }
