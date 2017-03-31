@@ -10,11 +10,8 @@ using namespace std;
 
 int loadMap()
 {
-
 	ifstream File;
 	File.open("map.txt");
-	
-
 	return 0;
 }
 
@@ -23,7 +20,6 @@ int loadMap()
 
 void Display::drawScreenGrid(sf::RenderWindow * window)
 {
-	loadMap();
 	for (int x = 0; x < 40; x++) {
 		for (int y = 0; y < 40; y++) {
 

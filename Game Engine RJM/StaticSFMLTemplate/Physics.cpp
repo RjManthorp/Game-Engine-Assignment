@@ -15,8 +15,8 @@ Physics::Physics(int xPos, int yPos, float width, float height, b2World & world,
 	buildShape(xPos, yPos, width, height, colour, outlineColour, lineThinkness);
 	
 	if (dynamic)
-		body->SetLinearDamping(1.0f);
-	body->SetAngularDamping(1.0f);
+	body->SetLinearDamping(0.1f);
+	body->SetAngularDamping(0.1f);
 	PhysicsObjects.push_back(this);
 }
 

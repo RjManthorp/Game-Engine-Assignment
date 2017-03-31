@@ -15,16 +15,13 @@
 
 #include <math.h>
 
-int screenX = 800;
+int screenX = 780;
 int screenY = 600;
 
 //Box2D
 int velocityIterations = 8;
 int positionIterations = 3;
 float32 timeStep = 1.0f / 60.0f;
-
-
-
 
 
 int main()
@@ -34,6 +31,13 @@ int main()
 	
 	sf::Texture ball;
 	ball.loadFromFile("ball.png");
+
+	sf::Texture bTexture;
+	if (!bTexture.loadFromFile("map.png"))
+		std::cout << "Error loading image file" << std::endl;
+	sf::Sprite background(bTexture);
+
+
 
 	//-----------
 	//Box2D
@@ -53,17 +57,19 @@ int main()
 
 
 	//Make physics object--------------------------------X-Y-H-W-Colour-Dynamic(true) or static-------------------
-	Physics *physicsObject = new Physics(400, 50, 50.f, 50.f, World, sf::Color::Cyan, sf::Color::Black, -2, true);
-	Physics *mouseObject = new Physics(10, 10, 70.f, 7.f, World, sf::Color::Magenta, sf::Color::Black, -2);
-	PhysicsCircle *circle = new PhysicsCircle(100, 100, 25.f, 50.0f, World, sf::Color::Red, sf::Color::Black, -2, true);
-	Physics *physicsObject2 = new Physics(400, 100, 440.f, 10.f, World, sf::Color::Yellow, sf::Color::Black, -2, true);
-	Physics groundPlatform = Physics(200, 350, 400.f, 25.f,World, sf::Color::Green, sf::Color::Black, -2);
-	Physics groundPlatform2 = Physics(300, 600, 1000.f, 25.f, World, sf::Color::Blue , sf::Color::Black, -2);
-	Physics *wallLeft = new Physics(0, 150, 50.f, 900.f, World, sf::Color::Blue, sf::Color::Black, -2);
-	Physics *wallRight = new Physics(800, 150, 50.f, 900.f, World, sf::Color::Blue, sf::Color::Black, -2);
+	PhysicsCircle *circle = new PhysicsCircle(390, 305, 125.f, 160.0f, World, sf::Color::Transparent, sf::Color::White, -2, false);
 
+	Physics floor = Physics(300, 565, 1000.f, 10.f, World, sf::Color::Transparent, sf::Color::Blue, -1);
+	Physics roof = Physics(300, 35, 1000.f, 10.f, World, sf::Color::Transparent, sf::Color::Blue, -1);
+	Physics *wallLeft = new Physics(35, 150, 10.f, 900.f, World, sf::Color::Transparent, sf::Color::Blue, -1);
+	Physics *wallRight = new Physics(745, 150, 10.f, 900.f, World, sf::Color::Transparent, sf::Color::Blue, -1);
 
-	Player *player = new Player(600, 600, 50.f, 50.f, World, sf::Color::Transparent, sf::Color::Black, -5, true);
+	Physics *item = new Physics(100, 60, 10, 10, World, sf::Color::Red, sf::Color::Black, -2, true);
+	Physics *item2 = new Physics(150, 60, 10, 10, World, sf::Color::Red, sf::Color::Black, -2, true);
+	Physics *item3 = new Physics(200, 60, 10, 10, World, sf::Color::Red, sf::Color::Black, -2, true);
+	Physics *item4 = new Physics(250, 60, 10, 10, World, sf::Color::Red, sf::Color::Black, -2, true);
+
+	Player *player = new Player(50, 50, 24.f, 24.f, World, sf::Color::Black, sf::Color::White, -2, true);
 
 	while (window.isOpen()) // main game loop
 	{
@@ -147,7 +153,8 @@ int main()
 		//World.DrawDebugData();
 		//-------------
 		// Drawing
-		Draw.drawScreenGrid(&window);
+		//Draw.drawScreenGrid(&window);
+		window.draw(background);
 
 		player->movement();
 		
