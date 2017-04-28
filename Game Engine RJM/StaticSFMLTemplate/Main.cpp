@@ -23,6 +23,8 @@ int velocityIterations = 8;
 int positionIterations = 3;
 float32 timeStep = 1.0f / 60.0f;
 
+bool mouseClick;
+
 
 int main()
 {
@@ -30,14 +32,19 @@ int main()
 	Display Draw;
 	
 	sf::Texture ball;
-	ball.loadFromFile("ball.png");
+	if (!ball.loadFromFile("ball.png"))
+		std::cout << "error laoding image file" << std::endl;
+	sf::Sprite ballItem(ball);
+	ballItem.setScale(0.41f, 0.41f);
+	ballItem.setOrigin(400, 400);
+	ballItem.setPosition(390,310);
 
 	sf::Texture bTexture;
 	if (!bTexture.loadFromFile("map.png"))
 		std::cout << "Error loading image file" << std::endl;
 	sf::Sprite background(bTexture);
 
-
+	
 
 	//-----------
 	//Box2D
@@ -59,10 +66,10 @@ int main()
 	//Make physics object--------------------------------X-Y-H-W-Colour-Dynamic(true) or static-------------------
 	PhysicsCircle *circle = new PhysicsCircle(390, 305, 125.f, 160.0f, World, sf::Color::Transparent, sf::Color::White, -2, false);
 
-	Physics floor = Physics(300, 565, 1000.f, 10.f, World, sf::Color::Transparent, sf::Color::Blue, -1);
-	Physics roof = Physics(300, 35, 1000.f, 10.f, World, sf::Color::Transparent, sf::Color::Blue, -1);
-	Physics *wallLeft = new Physics(35, 150, 10.f, 900.f, World, sf::Color::Transparent, sf::Color::Blue, -1);
-	Physics *wallRight = new Physics(745, 150, 10.f, 900.f, World, sf::Color::Transparent, sf::Color::Blue, -1);
+	Physics floor = Physics(300, 565, 1000.f, 10.f, World, sf::Color::Transparent, sf::Color::White, -1);
+	Physics roof = Physics(300, 35, 1000.f, 10.f, World, sf::Color::Transparent, sf::Color::White, -1);
+	Physics *wallLeft = new Physics(35, 150, 10.f, 900.f, World, sf::Color::Transparent, sf::Color::White, -1);
+	Physics *wallRight = new Physics(745, 150, 10.f, 900.f, World, sf::Color::Transparent, sf::Color::White, -1);
 
 	Physics *item = new Physics(100, 60, 10, 10, World, sf::Color::Red, sf::Color::Black, -2, true);
 	Physics *item2 = new Physics(150, 60, 10, 10, World, sf::Color::Red, sf::Color::Black, -2, true);
@@ -81,9 +88,13 @@ int main()
 		sf::Vector2i mousePosition = sf::Mouse::getPosition(window); //gets the mouse x and y
 		InputManager::GetInstance()->mousePosition(mousePosition); // writes x and y to terminal
 		//mouseObject->SetPosition(mousePosition.x, mousePosition.y, true);
-
+		
 		//circle->SetTexture(ball);
-
+		if (mouseClick == true)
+		{
+			Physics *item = new Physics(mousePosition.x, mousePosition.y, 10, 10, World, sf::Color::Red, sf::Color::Black, -2, true);
+		}
+		
 
 		sf::Event event;
 		while (window.pollEvent(event))
@@ -101,6 +112,8 @@ int main()
 				case 0:
 					mouseButtonDown = "Left mouse button";
 					//physicsObject->ApplyLinearImpulse(b2Vec2(-100, 0));
+					mouseClick = true;
+					
 					break;
 				case 1:
 					mouseButtonDown = "Right mouse button";
@@ -123,6 +136,7 @@ int main()
 				{
 				case 0:
 					mouseButtonUp = "Left mouse button";
+					mouseClick = false;
 					break;
 				case 1:
 					mouseButtonUp = "Right mouse button";
@@ -155,6 +169,7 @@ int main()
 		// Drawing
 		//Draw.drawScreenGrid(&window);
 		window.draw(background);
+		//window.draw(ballItem);
 
 		player->movement();
 		
